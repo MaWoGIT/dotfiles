@@ -29,6 +29,7 @@ zstyle :prompt:pure:prompt:success color red
 source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
+source <(fzf --zsh)
 # Load your custom aliases
 [[ -f ~/.aliases ]] && source ~/.aliases
 
