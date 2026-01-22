@@ -30,12 +30,6 @@ if ! fzf --version | grep -qE "0\.(4[8-9]|[5-9])"; then
     git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
     ~/.fzf/install --all --no-bash --no-fish
 fi
-# This ensures $HOME/.fzf/bin is at the START of your PATH in .zshrc
-if ! grep -q ".fzf/bin" "$HOME/.zshrc"; then
-    info "Adding fzf to PATH in .zshrc..."
-    # [cite_start]Use sed to insert the PATH export at the very top of the file [cite: 5]
-    sed -i '1i export PATH="$HOME/.fzf/bin:$PATH"' "$HOME/.zshrc"
-fi
 
 # --- 2. INSTALL ZSH PLUGINS ---
 PLUGIN_DIR="/usr/share"
@@ -77,6 +71,12 @@ cd "$DOTFILES"
 [ -f "$HOME/.vimrc" ] && [ ! -L "$HOME/.vimrc" ] && mv "$HOME/.vimrc" "$HOME/.vimrc.bak"
 stow .
 
+# This ensures $HOME/.fzf/bin is at the START of your PATH in .zshrc
+if ! grep -q ".fzf/bin" "$HOME/.zshrc"; then
+    info "Adding fzf to PATH in .zshrc..."
+    # [cite_start]Use sed to insert the PATH export at the very top of the file [cite: 5]
+    sed -i '1i export PATH="$HOME/.fzf/bin:$PATH"' "$HOME/.zshrc"
+fi
 # --- 6. SET DEFAULT SHELL ---
 info "Changing default shell to Zsh..."
 $SUDO chsh -s "$(which zsh)" "$USER"
