@@ -17,15 +17,24 @@ if [ -f /etc/debian_version ] || [ -f /etc/lsb-release ]; then
 elif [ -f /etc/fedora-release ] || [ -f /etc/nobara-release ]; then
     $SUDO dnf install -y zsh stow git curl
 fi
+# --- 2. INSTALL ZSH PLUGINS ---
+PLUGIN_DIR="/usr/share"
+info "Installing Zsh plugins..."
+if [ ! -d "$PLUGIN_DIR/zsh-syntax-highlighting" ]; then
+    $SUDO git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$PLUGIN_DIR/zsh-syntax-highlighting"
+fi
+if [ ! -d "$PLUGIN_DIR/zsh-autosuggestions" ]; then
+    $SUDO git clone https://github.com/zsh-users/zsh-autosuggestions.git "$PLUGIN_DIR/zsh-autosuggestions"
+fi
 
-# --- 2. CLONE REPO IF MISSING ---
+# --- 3. CLONE REPO IF MISSING ---
 DOTFILES="$HOME/.dotfiles"
 if [ ! -d "$DOTFILES" ]; then
     info "Cloning dotfiles repository..."
     git clone https://github.com/MaWoGIT/dotfiles.git "$DOTFILES"
 fi
 
-# --- 3. INSTALL NERD FONTS (For Icons) ---
+# --- 4. INSTALL NERD FONTS (For Icons) ---
 FONT_DIR="$HOME/.local/share/fonts"
 if [ ! -d "$FONT_DIR/JetBrainsMono" ]; then
     info "Installing JetBrainsMono Nerd Font..."
@@ -40,14 +49,14 @@ if [ ! -d "$FONT_DIR/JetBrainsMono" ]; then
     info "Font installed. You may need to select it in your terminal settings."
 fi
 
-# --- 4. DEPLOY WITH STOW ---
+# --- 5. DEPLOY WITH STOW ---
 info "Linking dotfiles..."
 cd "$DOTFILES"
 # Backup existing .zshrc
 [ -f "$HOME/.zshrc" ] && [ ! -L "$HOME/.zshrc" ] && mv "$HOME/.zshrc" "$HOME/.zshrc.bak"
 stow .
 
-# --- 5. SET DEFAULT SHELL ---
+# --- 6. SET DEFAULT SHELL ---
 info "Changing default shell to Zsh..."
 $SUDO chsh -s "$(which zsh)" "$USER"
 
