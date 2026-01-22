@@ -30,7 +30,7 @@ source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # Load your custom aliases
-source ~/.shell_configs/.aliases
+[[ -f ~/.aliases ]] && source ~/.aliases
 
 # --- CUSTOMIZATIONS (Must come AFTER plugins) ---
 # Now you can safely override the plugin styles
@@ -49,7 +49,7 @@ ZSH_HIGHLIGHT_STYLES[path]='fg=red'
 #    eval "$(starship init zsh)"
 #else
 #    # Fallback to Pure when Starship isn't installed
-    fpath+=$HOME/.shell_configs/pure
+    fpath+=$HOME/pure
     autoload -Uz promptinit; promptinit
     prompt pure
 #fi

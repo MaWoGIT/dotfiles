@@ -1,0 +1,7 @@
+# Ignore sensitive SSH keys
+.ssh/
+# Ignore history files (they can contain passwords you typed)
+.zsh_history
+.bash_history
+# Ignore local environment variables
+.env
