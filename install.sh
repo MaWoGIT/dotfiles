@@ -1,35 +1,54 @@
 #!/usr/bin/env bash
 
-# Colors for better readability
+# --- HELPER FUNCTIONS ---
 info() { echo -e "\033[0;34m[INFO]\033[0m $1"; }
 
-# --- 1. INSTALL DEPENDENCIES ---
-info "Installing zsh, stow, and git..."
-if [ -f /etc/fedora-release ] || [ -f /etc/nobara-release ]; then
-    sudo dnf install -y zsh stow git
-elif [ -f /etc/debian_version ]; then
-    sudo apt update && sudo apt install -y zsh stow git
+# Use sudo only if it exists and we aren't root
+if command -v sudo >/dev/null 2>&1 && [ "$EUID" -ne 0 ]; then
+    SUDO="sudo"
+else
+    SUDO=""
 fi
 
-# --- 2. ENSURE PURE FILES EXIST ---
-# We keep these in the repo so they are available on all machines
-PURE_DIR="$HOME/.dotfiles/pure"
-if [ ! -d "$PURE_DIR" ]; then
-    info "Downloading Pure prompt files..."
-    mkdir -p "$PURE_DIR"
-    curl -L https://raw.githubusercontent.com/sindresorhus/pure/master/pure.zsh -o "$PURE_DIR/prompt_pure_setup"
-    curl -L https://raw.githubusercontent.com/sindresorhus/pure/master/async.zsh -o "$PURE_DIR/async"
+# --- 1. INSTALL CORE DEPENDENCIES ---
+info "Installing zsh, stow, git, and curl..."
+if [ -f /etc/debian_version ] || [ -f /etc/lsb-release ]; then
+    $SUDO apt update && $SUDO apt install -y zsh stow git curl
+elif [ -f /etc/fedora-release ] || [ -f /etc/nobara-release ]; then
+    $SUDO dnf install -y zsh stow git curl
 fi
 
-# --- 3. DEPLOY CONFIGS WITH STOW ---
-info "Linking dotfiles to Home directory..."
-cd "$HOME/.dotfiles"
-# Backup original .zshrc if it's a real file and not already a link
+# --- 2. CLONE REPO IF MISSING ---
+DOTFILES="$HOME/.dotfiles"
+if [ ! -d "$DOTFILES" ]; then
+    info "Cloning dotfiles repository..."
+    git clone https://github.com/MaWoGIT/dotfiles.git "$DOTFILES"
+fi
+
+# --- 3. INSTALL NERD FONTS (For Icons) ---
+FONT_DIR="$HOME/.local/share/fonts"
+if [ ! -d "$FONT_DIR/JetBrainsMono" ]; then
+    info "Installing JetBrainsMono Nerd Font..."
+    mkdir -p "$FONT_DIR/JetBrainsMono"
+    # Download the font zip
+    curl -L https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip -o /tmp/font.zip
+    # Unzip to font directory (requires 'unzip' package)
+    $SUDO apt install -y unzip || $SUDO dnf install -y unzip
+    unzip -o /tmp/font.zip -d "$FONT_DIR/JetBrainsMono"
+    # Update font cache
+    fc-cache -fv > /dev/null
+    info "Font installed. You may need to select it in your terminal settings."
+fi
+
+# --- 4. DEPLOY WITH STOW ---
+info "Linking dotfiles..."
+cd "$DOTFILES"
+# Backup existing .zshrc
 [ -f "$HOME/.zshrc" ] && [ ! -L "$HOME/.zshrc" ] && mv "$HOME/.zshrc" "$HOME/.zshrc.bak"
 stow .
 
-# --- 4. SET ZSH AS DEFAULT ---
-info "Setting Zsh as the default shell..."
-sudo chsh -s "$(which zsh)" "$USER"
+# --- 5. SET DEFAULT SHELL ---
+info "Changing default shell to Zsh..."
+$SUDO chsh -s "$(which zsh)" "$USER"
 
-info "Done! Log out and back in to see your clean, Pure-powered shell."
+info "All done! Run 'exec zsh' or log out/in to finish."
