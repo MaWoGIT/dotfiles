@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# --- HELPER FUNCTIONS ---
+# --- Info Function for output
 info() { echo -e "\033[0;34m[INFO]\033[0m $1"; }
 
 # Use sudo only if it exists and we aren't root
@@ -11,12 +11,26 @@ else
 fi
 
 # --- 1. INSTALL CORE DEPENDENCIES ---
-info "Installing zsh, stow, git, and curl..."
-if [ -f /etc/debian_version ] || [ -f /etc/lsb-release ]; then
-    $SUDO apt update && $SUDO apt install -y zsh stow git curl vim fzf
-elif [ -f /etc/fedora-release ] || [ -f /etc/nobara-release ]; then
-    $SUDO dnf install -y zsh stow git curl vim fzf
+info "Installing zsh, stow, git, unzip, fzf, eza ,vim and curl..."
+if [ -f /etc/debian_version ]; then
+    # Eza is not in the official repos for Debian so we have to add a new one
+    info "Setting up eza repository..."
+    $SUDO mkdir -p /etc/apt/keyrings
+    curl -fsSL https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | $SUDO gpg --dearmor -o /etc/apt/keyrings/gierens.gpg
+    echo "deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main" | $SUDO tee /etc/apt/sources.list.d/gierens.list
+    $SUDO chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list
+    
+    $SUDO apt update && $SUDO apt install -y gpg gpg-agent vim curl git zsh stow unzip fzf eza
+elif [ -f /etc/fedora-release ]; then
+    $SUDO dnf install -y zsh stow git curl unzip eza fzf vim
 fi
+# Check Version of fzf we need > 0.48
+if ! fzf --version | grep -qE "0\.(4[8-9]|[5-9])"; then
+    info "fzf is outdated or missing. Installing latest..."
+    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+    ~/.fzf/install --all
+fi
+
 # --- 2. INSTALL ZSH PLUGINS ---
 PLUGIN_DIR="/usr/share"
 info "Installing Zsh plugins..."
@@ -52,8 +66,9 @@ fi
 # --- 5. DEPLOY WITH STOW ---
 info "Linking dotfiles..."
 cd "$DOTFILES"
-# Backup existing .zshrc
+# Backup existing .zshrc and .vimrc
 [ -f "$HOME/.zshrc" ] && [ ! -L "$HOME/.zshrc" ] && mv "$HOME/.zshrc" "$HOME/.zshrc.bak"
+[ -f "$HOME/.vimrc" ] && [ ! -L "$HOME/.vimrc" ] && mv "$HOME/.vimrc" "$HOME/.vimrc.bak"
 stow .
 
 # --- 6. SET DEFAULT SHELL ---

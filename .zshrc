@@ -11,6 +11,7 @@ setopt autocd extendedglob
 export MANPAGER="less -R --use-color -Dd+r -Du+b"
 export GROFF_NO_SGR=1
 export DOTFILES="$HOME/.dotfiles"
+export PATH="$HOME/bin:$PATH"
 bindkey -v
 
 # The following lines were added by compinstall
@@ -26,8 +27,12 @@ zstyle :prompt:pure:prompt:success color red
 # PURE_PROMPT_SYMBOL="➜"
 # --- PLUGINS ---
 # Load the plugins first
-source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+# Check system path first, then local path
+if [ -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+    source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+elif [ -f $HOME/.dotfiles/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+    source $HOME/.dotfiles/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
 
 source <(fzf --zsh)
 # Load your custom aliases
