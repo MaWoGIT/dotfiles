@@ -13,9 +13,9 @@ fi
 # --- 1. INSTALL CORE DEPENDENCIES ---
 info "Installing zsh, stow, git, and curl..."
 if [ -f /etc/debian_version ] || [ -f /etc/lsb-release ]; then
-    $SUDO apt update && $SUDO apt install -y zsh stow git curl
+    $SUDO apt update && $SUDO apt install -y zsh stow git curl vim
 elif [ -f /etc/fedora-release ] || [ -f /etc/nobara-release ]; then
-    $SUDO dnf install -y zsh stow git curl
+    $SUDO dnf install -y zsh stow git curl vim
 fi
 # --- 2. INSTALL ZSH PLUGINS ---
 PLUGIN_DIR="/usr/share"

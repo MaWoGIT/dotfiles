@@ -13,4 +13,5 @@ else
 fi
 alias la='ls -la --color=auto'
 alias ..='cd ..'
+alias v='vim'
 export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
