@@ -10,7 +10,7 @@ setopt SHARE_HISTORY       # Share history across all active sessions
 setopt autocd extendedglob
 export MANPAGER="less -R --use-color -Dd+r -Du+b"
 export GROFF_NO_SGR=1
-
+export DOTFILES="$HOME/.dotfiles"
 bindkey -v
 
 # The following lines were added by compinstall
@@ -33,18 +33,9 @@ source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 [[ -f ~/.aliases ]] && source ~/.aliases
 
 # --- CUSTOMIZATIONS (Must come AFTER plugins) ---
-# Now you can safely override the plugin styles
 ZSH_HIGHLIGHT_STYLES[path]='fg=red'
 
 # Initialize the prompt
-#if (( $+commands[starship] )); then
-    # Use Starship if available
-#    eval "$(starship init zsh)"
-#else
-    # "Nice" Native Fallback
-    # %n = username, %m = hostname, %~ = current path
-   # PROMPT='%K{blue}%F{black} %n@%m %f%k%K{black}%F{blue}%f%k %F{cyan}%~%f %F{yellow}❯%f '
-#fi
 #if (( $+commands[starship] )); then
 #    eval "$(starship init zsh)"
 #else

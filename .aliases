@@ -1,12 +1,16 @@
 # My Apps
-alias ls='eza -al --color=always --group-directories-first --icons'
 alias dvdren='dvd_rename_and_sort.sh'
 alias tvon='screens.sh tv'
 alias tvoff='screens.sh desk'
 # Alias
+# Only alias ls to eza if eza actually exists
+if command -v eza >/dev/null 2>&1; then
+    alias ls='eza --color=always --icons --group-directories-first'
+    alias ll='eza -al --color=always --icons --group-directories-first'
+else
+    alias ls='ls --color=auto'
+    alias ll='ls -lah'
+fi
 alias la='ls -la --color=auto'
 alias ..='cd ..'
-
 export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
-# Use Vim as the default viewer for man pages
-
