@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-# --- Info Function for output
+# Ensure standard system paths are available so we can find sudo/git
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
+
 info() { echo -e "\033[0;34m[INFO]\033[0m $1"; }
 
 # Use sudo only if it exists and we aren't root
