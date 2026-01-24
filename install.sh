@@ -13,17 +13,22 @@ else
 fi
 
 # --- 1. INSTALL CORE DEPENDENCIES ---
-info "Installing zsh, stow, git, unzip, fzf, eza ,vim and curl..."
+info "Installing core requirements: curl, git, gpg, gpg-agent..."
+$SUDO apt update && $SUDO apt install -y gpg gpg-agent curl git
+# --- SANITY CHECK ---
+# If these commands aren't available now, the script stops here
+command -v gpg >/dev/null 2>&1 || error "gpg failed to install."
+command -v git >/dev/null 2>&1 || error "git failed to install."
+
 if [ -f /etc/debian_version ]; then
     # Eza is not in the official repos for Debian so we have to add a new one
     info "Setting up eza repository..."
-    $SUDO apt update && $SUDO apt install -y gpg gpg-agent curl
     $SUDO mkdir -p /etc/apt/keyrings
     curl -fsSL https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | $SUDO gpg --dearmor -o /etc/apt/keyrings/gierens.gpg
     echo "deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main" | $SUDO tee /etc/apt/sources.list.d/gierens.list
     $SUDO chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list
     
-    $SUDO apt update && $SUDO apt install -y vim git zsh stow unzip fzf eza
+    $SUDO apt update && $SUDO apt install -y vim zsh stow unzip fzf eza
 elif [ -f /etc/fedora-release ]; then
     $SUDO dnf install -y zsh stow git curl unzip eza fzf vim
 fi
