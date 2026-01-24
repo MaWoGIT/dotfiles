@@ -14,4 +14,6 @@ fi
 alias la='ls -la --color=auto'
 alias ..='cd ..'
 alias v='vim'
+alias e=exit
+alias t=tmux
 export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
