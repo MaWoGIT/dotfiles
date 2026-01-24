@@ -15,12 +15,13 @@ info "Installing zsh, stow, git, unzip, fzf, eza ,vim and curl..."
 if [ -f /etc/debian_version ]; then
     # Eza is not in the official repos for Debian so we have to add a new one
     info "Setting up eza repository..."
+    $SUDO apt update && $SUDO apt install -y gpg gpg-agent curl
     $SUDO mkdir -p /etc/apt/keyrings
     curl -fsSL https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | $SUDO gpg --dearmor -o /etc/apt/keyrings/gierens.gpg
     echo "deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main" | $SUDO tee /etc/apt/sources.list.d/gierens.list
     $SUDO chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list
     
-    $SUDO apt update && $SUDO apt install -y gpg gpg-agent vim curl git zsh stow unzip fzf eza
+    $SUDO apt update && $SUDO apt install -y vim git zsh stow unzip fzf eza
 elif [ -f /etc/fedora-release ]; then
     $SUDO dnf install -y zsh stow git curl unzip eza fzf vim
 fi
